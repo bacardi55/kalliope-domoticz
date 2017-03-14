@@ -7,7 +7,7 @@
     pymoticz dim <id> <level> [--host=<host>]
     pymoticz getSun [--host=<host>]
     pymoticz addSwitch
-    pymoticz listTimers <id> 
+    pymoticz listTimers <id>
     pymoticz addTimer <id> <time> <cmd>
     pymoticz addDummy <type>
     pymoticz log <id>
@@ -15,7 +15,7 @@
     pymoticz delete <id>
     pymoticz setCounter <id> <value>
     pymoticz changeCounterType <id> <type>
-    pymoticz increment <id> 
+    pymoticz increment <id>
 """
 import requests
 import json
@@ -48,7 +48,7 @@ dummyTypes = {
     250 : ['P1 Smart Meter','Energy','p1']
     }
 
-    
+
 counterTypes = {
     0 : 'energy',
     1 : 'gas',
@@ -56,7 +56,7 @@ counterTypes = {
     3 : 'coutner',
     4 : 'energy generated'
     }
-    
+
 def printResponse (_response, _OK, _ERR):
     if _response['status'] == 'OK':
         print _OK
@@ -68,18 +68,21 @@ class Pymoticz:
     DIMMER = u'Dimmer'
     ON_OFF = u'On/Off'
     SWITCH_TYPES=[ DIMMER, ON_OFF ]
-    def __init__(self, domoticz_host='127.0.0.1:8080'):
+    def __init__(self, domoticz_host='127.0.0.1:8080', ssl_verify=True):
+        if domoticz_host.startswith('http') is False:
+            domoticz_host = 'http://' + domoticz_host
         self.host = domoticz_host
+        self.ssl_verify = ssl_verify
 
     def getSensorID (self,type):
         for id, tuples in dummyTypes.items():
             if tuples[2] == type:
                 return id
-            
+
         return 0
-        
+
     def _request(self, url):
-        r=requests.get(url)
+        r=requests.get(url, verify = self.ssl_verify)
 
         if r.status_code == 200:
             return json.loads(r.text)
@@ -91,11 +94,11 @@ class Pymoticz:
         return ["%s\t%s" % (device['idx'], device['Name']) for device in l['result']]
 
     def list_hard(self):
-        url='http://%s/json.htm?type=hardware' % self.host
+        url='%s/json.htm?type=hardware' % self.host
         return self._request(url)
 
     def data_idx(self,_id):
-        url='http://%s/json.htm?type=devices&rid=%s' %(self.host, _id)
+        url='%s/json.htm?type=devices&rid=%s' %(self.host, _id)
         return self._request(url)
 
     def list_names(self):
@@ -107,11 +110,11 @@ class Pymoticz:
         return ["%s\t%s (%s-%s)" % (device['idx'], device['Name'], device['Type'], device['SubType']) for device in l['result']]
 
     def list(self):
-        url='http://%s/json.htm?type=devices&used=true' % self.host
+        url='%s/json.htm?type=devices&used=true' % self.host
         return self._request(url)
 
     def list_scenes(self):
-        url='http://%s/json.htm?type=scenes&used=true' % self.host
+        url='%s/json.htm?type=scenes&used=true' % self.host
         return self._request(url)
 
     def list_scenes_names(self):
@@ -123,19 +126,19 @@ class Pymoticz:
         return ["%s\t%s" % (device['idx'], device['Name']) for device in l['result']]
 
     def turn_on(self, _id):
-        url='http://%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=On' % (self.host, _id)
+        url='%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=On' % (self.host, _id)
         return self._request(url)
 
     def turn_off(self, _id):
-        url='http://%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=Off&level=0' % (self.host, _id)
+        url='%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=Off&level=0' % (self.host, _id)
         return self._request(url)
 
     def turn_on_scene(self, _id):
-        url='http://%s/json.htm?type=command&param=switchscene&idx=%s&switchcmd=On' % (self.host, _id)
+        url='%s/json.htm?type=command&param=switchscene&idx=%s&switchcmd=On' % (self.host, _id)
         return self._request(url)
 
     def turn_off_scene(self, _id):
-        url='http://%s/json.htm?type=command&param=switchscene&idx=%s&switchcmd=Off&level=0' % (self.host, _id)
+        url='%s/json.htm?type=command&param=switchscene&idx=%s&switchcmd=Off&level=0' % (self.host, _id)
         return self._request(url)
 
     def dim(self, _id, level):
@@ -146,20 +149,20 @@ class Pymoticz:
         max_dim=d['MaxDimLevel']
         if int(level) > max_dim or int(level) < 0:
             return 'Level has to be in the range 0 to %d' % max_dim
-        url='http://%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=Set Level&level=%s' % (self.host, _id, level)
+        url='%s/json.htm?type=command&param=switchlight&idx=%s&switchcmd=Set Level&level=%s' % (self.host, _id, level)
         return self._request(url)
 
     def set_counter (self, _id, _value):
-        url='http://%s/json.htm?type=command&param=udevice&idx=%s&nvalue=%s' % (self.host, _id, _value)
+        url='%s/json.htm?type=command&param=udevice&idx=%s&nvalue=%s' % (self.host, _id, _value)
         response = self._request(url)
         return response
-   
+
     def increment_counter (self, _id):
         l=self.data_idx(_id)
         actualValue = [device['Data'] for device in l['result']][0]
         actualValue = int (actualValue)
         actualValue+=1
-        url='http://%s/json.htm?type=command&param=udevice&idx=%s&nvalue=%s' % (self.host, _id, actualValue)
+        url='%s/json.htm?type=command&param=udevice&idx=%s&nvalue=%s' % (self.host, _id, actualValue)
         response = self._request(url)
         printResponse(response, "value of device %s changed to %s" % (_id, actualValue), "ERROR")
         return response
@@ -200,7 +203,7 @@ class Pymoticz:
             return scene['Status']
 
     def get_sun(self):
-        url='http://%s/json.htm?type=command&param=getSunRiseSet' % self.host
+        url='%s/json.htm?type=command&param=getSunRiseSet' % self.host
         response = self._request(url)
         if response['status'] == 'ERR':
             return "ERROR can't get sun informations"
@@ -208,28 +211,28 @@ class Pymoticz:
             return "%s\t%s" % (response['Sunrise'], response['Sunset'])
 
     def get_logs(self, _id):
-        url='http://%s/json.htm?type=textlog&idx=%s' % (self.host, _id)
+        url='%s/json.htm?type=textlog&idx=%s' % (self.host, _id)
         response = self._request(url)
-        if 'result' in response:            
+        if 'result' in response:
             l=response
             return ["%s\t%s" % (device['Date'], device['Data']) for device in l['result']]
         else:
             return 0
-            
+
     def rename (self, _id, _name):
-        url='http://%s/json.htm?type=command&param=renamedevice&idx=%s&name=%s' % (self.host, _id, _name)
+        url='%s/json.htm?type=command&param=renamedevice&idx=%s&name=%s' % (self.host, _id, _name)
         response = self._request(url)
         return response
-            
+
     def get_timers(self, _id):
-        url='http://%s/json.htm?type=timers&idx=%s' % (self.host, _id)
+        url='%s/json.htm?type=timers&idx=%s' % (self.host, _id)
         response = self._request(url)
         if 'result' in response:
             l=response
             return ["%s\t%s\t%s" % (device['idx'], device['Time'], device['Cmd']) for device in l['result']]
         else:
             return 0
-        
+
     def add_timer(self, _id, time, cmd):
         hour=time.split(":")[0]
         min=time.split(":")[1]
@@ -237,16 +240,16 @@ class Pymoticz:
             cmd = 0
         else :
             cmd = 1
-        url='http://%s/json.htm?type=command&param=addtimer&idx=%s&active=true&timertype=2&date=&hour=%s&min=%s&randomness=false&command=%s&level=100&hue=0&days=128' % (self.host, _id, hour, min, cmd)
+        url='%s/json.htm?type=command&param=addtimer&idx=%s&active=true&timertype=2&date=&hour=%s&min=%s&randomness=false&command=%s&level=100&hue=0&days=128' % (self.host, _id, hour, min, cmd)
         response = self._request(url)
         return response
-    
-    
+
+
     def delete (self, _id):
-        url='http://%s/json.htm?type=deletedevice&idx=%s' % (self.host, _id)
+        url='%s/json.htm?type=deletedevice&idx=%s' % (self.host, _id)
         response = self._request(url)
         return response
-    
+
     def get_dummy_id(self):
         l=self.list_hard()
         for device in l['result'] :
@@ -255,15 +258,15 @@ class Pymoticz:
         return 0
 
     def get_dummy_switch(self):
-        url='http://%s/json.htm?type=devices&filter=light&used=false&order=LastUpdate' % self.host
+        url='%s/json.htm?type=devices&filter=light&used=false&order=LastUpdate' % self.host
         l =self._request(url)
         for device in l['result'] :
             if device['Name'] == 'Unknown' :
                 return device['idx']
         return 0
-        
+
     def get_dummy_device_id(self, id):
-        url='http://%s/json.htm?type=devices&filter=all&used=false&order=Name' % self.host
+        url='%s/json.htm?type=devices&filter=all&used=false&order=Name' % self.host
         l =self._request(url)
         for device in l['result'] :
             if device ['SubType'] == dummyTypes[id][1] :
@@ -276,12 +279,12 @@ class Pymoticz:
        l=self.list_hard()
        dummyId=self.get_dummy_id()
        if dummyId != 0 :
-            url='http://%s/json.htm?type=createvirtualsensor&idx=%s&sensortype=%s' % (self.host, dummyId, type)
+            url='%s/json.htm?type=createvirtualsensor&idx=%s&sensortype=%s' % (self.host, dummyId, type)
             response = self._request(url)
             # we enable the dummy
             dummySwID=self.get_dummy_device_id(type)
             if dummySwID != 0 :
-                url='http://%s/json.htm?type=setused&idx=%s&name=dummy%s&used=true&maindeviceidx=' % (self.host, dummySwID, dummySwID)
+                url='%s/json.htm?type=setused&idx=%s&name=dummy%s&used=true&maindeviceidx=' % (self.host, dummySwID, dummySwID)
                 response = self._request(url)
                 return dummySwID
             else :
@@ -289,7 +292,7 @@ class Pymoticz:
        else :
            print "ERROR : no dummy device found, create one before adding virtual switch"
            return 0
-        
+
 
 
 if __name__ == '__main__':
@@ -340,7 +343,7 @@ if __name__ == '__main__':
     elif args['dim']:
         response = p.dim(args['<id>'], args['<level>'])
         print (response)
-            
+
 
     elif args['addDummy']:
         sensorID = p.getSensorID(args['<type>'])
@@ -348,19 +351,19 @@ if __name__ == '__main__':
             print "%s is not a valid type. Choose :" % args['<type>']
             for x in dummyTypes.viewvalues() :
                 print x[2]
-        else :    
+        else :
 
             response = p.addVirtualSensor(sensorID)
             if response != 0 :
                 print "dummy device %s created" %response
             else :
                 print "error with dummy device creation"
-        
+
 
     elif args['getSun']:
         response = p.get_sun()
         print(response)
-    
+
     elif args['listTimers']:
         if (p.get_timers(args['<id>'])) == 0 :
             print "no timers configured for this device"
@@ -368,7 +371,7 @@ if __name__ == '__main__':
             print ("0 = ON, 1 = OFF")
             print ('idTimer\ttime\tcmd')
             print('\n'.join(p.get_timers(args['<id>'])))
-    
+
     elif args['addTimer']:
         response = p.add_timer(args['<id>'], args['<time>'], args['<cmd>'])
         print response
@@ -385,11 +388,11 @@ if __name__ == '__main__':
     elif args['increment']:
         response = p.increment_counter(args['<id>'])
         #print (response)
-    
+
     elif args['rename']:
         response = p.rename(args['<id>'], args['<name>'])
         print "OK, device %s renamed to %s" % (args['<id>'], args['<name>'])
-        
+
     elif args ['log']:
         device = args['<id>']
         response = p.get_logs(args['<id>'])
