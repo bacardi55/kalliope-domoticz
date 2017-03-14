@@ -1,0 +1,10 @@
+- name: Kalliope Domoticz neuron
+  hosts: localhost
+  gather_facts: no
+  connection: local
+  become: true
+
+  tasks:
+    - name: "Install domoticz lib dependencies"
+      debug:
+          msg: "I do nothing at all"
