@@ -1,0 +1,44 @@
+---
+  - name: "domoticz-get-temp-living-room"
+    signals:
+      - order: "Temperature du salon"
+    neurons:
+      - domoticz:
+          host: "https://192.168.1.15:8056"
+          action: "get_device"
+          device: "6"
+          ssl_verify: "False"
+          say_template: "La température du salon est de {{devices[0]['Temp'] | safe}} degré et l'humidité est de {{devices[0]['Humidity'] | safe}} %"
+
+  - name: "domoticz-get-temp-office"
+    signals:
+      - order: "Temperature du salon"
+    neurons:
+      - domoticz:
+          host: "https://192.168.1.15:8056"
+          action: "get_device"
+          device: "12"
+          ssl_verify: "False"
+          say_template: "La température du bureau est de {{devices[0]['Temp'] | safe}} degré et l'humidité est de {{devices[0]['Humidity'] | safe}} %"
+
+  - name: "domoticz-get-lux-living-room"
+    signals:
+      - order: "Luminosité du salon"
+    neurons:
+      - domoticz:
+          host: "https://192.168.1.15:8056"
+          action: "get_device"
+          device: "5"
+          ssl_verify: "False"
+          say_template: "La luminosité du salon est de {{devices[0]['Data'] | safe}}"
+
+  - name: "domoticz-get-lux-office"
+    signals:
+      - order: "Luminosité du salon"
+    neurons:
+      - domoticz:
+          host: "https://192.168.1.15:8056"
+          action: "get_device"
+          device: "10"
+          ssl_verify: "False"
+          say_template: "La luminosité du bureau est de {{devices[0]['Data'] | safe}}"
