@@ -32,7 +32,6 @@ class Domoticz (NeuronModule):
                 message['devices'] = self._get_device(self.configuration['device'])
                 message['status'] = "OK"
                 logger.debug(message['devices'])
-                logger.debug(message['devices'][0]['Temp'])
             elif self.configuration['action'] == 'get_scene':
                 pass
             elif self.configuration['action'] == 'set_scene':

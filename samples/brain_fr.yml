@@ -4,7 +4,7 @@
       - order: "Temperature du salon"
     neurons:
       - domoticz:
-          host: "https://192.168.1.15:8056"
+          host: "{{domoticz_host}}"
           action: "get_device"
           device: "6"
           ssl_verify: "False"
@@ -15,7 +15,7 @@
       - order: "Temperature du salon"
     neurons:
       - domoticz:
-          host: "https://192.168.1.15:8056"
+          host: "{{domoticz_host}}"
           action: "get_device"
           device: "12"
           ssl_verify: "False"
@@ -26,7 +26,7 @@
       - order: "Luminosité du salon"
     neurons:
       - domoticz:
-          host: "https://192.168.1.15:8056"
+          host: "{{domoticz_host}}"
           action: "get_device"
           device: "5"
           ssl_verify: "False"
@@ -37,7 +37,7 @@
       - order: "Luminosité du salon"
     neurons:
       - domoticz:
-          host: "https://192.168.1.15:8056"
+          host: "{{domoticz_host}}"
           action: "get_device"
           device: "10"
           ssl_verify: "False"
