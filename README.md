@@ -15,15 +15,16 @@ For now, [this sample brain file](https://github.com/bacardi55/kalliope-domoticz
 
 What the neuron can do:
 
-- Request device data (eg: Temp / Lux sensor)
+- Request device data (eg: Temp / Lux sensor) (by device id)
+- set light switch on/off (by device id)
 
 
 Todo:
 
 - Get / set scenes
-- set light switch on/off
 - …
 
 
 * [my posts about kalliope](http://bacardi55.org/en/term/kalliope) 
+* [A blog post about this neuron](http://bacardi55.org/en/blog/2017/entering-domotic-game)
 

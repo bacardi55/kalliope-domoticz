@@ -42,3 +42,27 @@
           device: "10"
           ssl_verify: "False"
           say_template: "La luminosité du bureau est de {{devices[0]['Data'] | safe}}"
+
+  - name: "domoticz-turn-on-office-light"
+    signals:
+      - order: "allumer la lumière du bureau"
+    neurons:
+      - domoticz:
+          host: "{{domoticz_host}}"
+          action: "set_switch"
+          action_value: "on"
+          device: "15"
+          ssl_verify: "False"
+          say_template: "C'est fait monsieur"
+
+  - name: "domoticz-turn-off-office-light"
+    signals:
+      - order: "éteindre la lumière du bureau"
+    neurons:
+      - domoticz:
+          host: "{{domoticz_host}}"
+          action: "set_switch"
+          action_value: "off"
+          device: "15"
+          ssl_verify: "False"
+          say_template: "C'est fait monsieur"
