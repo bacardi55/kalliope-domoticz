@@ -1,7 +1,7 @@
 ---
   - name: "domoticz-get-temp-living-room"
     signals:
-      - order: "Temperature du salon"
+      - order: "Température du salon"
     neurons:
       - domoticz:
           host: "{{domoticz_host}}"
@@ -12,7 +12,7 @@
 
   - name: "domoticz-get-temp-office"
     signals:
-      - order: "Temperature du salon"
+      - order: "Température du bureau"
     neurons:
       - domoticz:
           host: "{{domoticz_host}}"
@@ -34,7 +34,7 @@
 
   - name: "domoticz-get-lux-office"
     signals:
-      - order: "Luminosité du salon"
+      - order: "Luminosité du bureau"
     neurons:
       - domoticz:
           host: "{{domoticz_host}}"
