@@ -1,4 +1,4 @@
-# kalliope-uber
+# kalliope-domoticz
 
 A neuron to leverage [domoticz](https://www.domoticz.com) API.
 
@@ -9,7 +9,6 @@ Domoticz is a domotic tool to manage your different devices at home. It is extre
 
 **This module is not stable and I'm only starting developing it. Also I don't have a lot of z-wave devices so my tests are not exhaustive**
 That being said, feel free to test and help me improve this module.
-
 
 For now, [this sample brain file](https://github.com/bacardi55/kalliope-domoticz/blob/master/samples/brain_fr.yml) act as documentation 
 
@@ -23,6 +22,12 @@ Todo:
 
 - Get / set scenes
 - …
+
+## Installation
+
+  ```
+  kalliope install --git-url https://github.com/bacardi55/kalliope-domoticz.git
+  ```
 
 
 * [my posts about kalliope](http://bacardi55.org/en/term/kalliope) 
