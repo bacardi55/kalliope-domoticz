@@ -59,9 +59,9 @@ counterTypes = {
 
 def printResponse (_response, _OK, _ERR):
     if _response['status'] == 'OK':
-        print _OK
+        print (_OK)
     else:
-        print _ERR
+        print (_ERR)
 
 
 class Pymoticz:
@@ -290,7 +290,7 @@ class Pymoticz:
             else :
                 print ("ERROR")
        else :
-           print "ERROR : no dummy device found, create one before adding virtual switch"
+           print ("ERROR : no dummy device found, create one before adding virtual switch")
            return 0
 
 
@@ -348,16 +348,16 @@ if __name__ == '__main__':
     elif args['addDummy']:
         sensorID = p.getSensorID(args['<type>'])
         if sensorID == 0 :
-            print "%s is not a valid type. Choose :" % args['<type>']
+            print ("%s is not a valid type. Choose :" % args['<type>'])
             for x in dummyTypes.viewvalues() :
-                print x[2]
+                print (x[2])
         else :
 
             response = p.addVirtualSensor(sensorID)
             if response != 0 :
-                print "dummy device %s created" %response
+                print ("dummy device %s created" %response)
             else :
-                print "error with dummy device creation"
+                print ("error with dummy device creation")
 
 
     elif args['getSun']:
@@ -366,7 +366,7 @@ if __name__ == '__main__':
 
     elif args['listTimers']:
         if (p.get_timers(args['<id>'])) == 0 :
-            print "no timers configured for this device"
+            print ("no timers configured for this device")
         else :
             print ("0 = ON, 1 = OFF")
             print ('idTimer\ttime\tcmd')
@@ -374,11 +374,11 @@ if __name__ == '__main__':
 
     elif args['addTimer']:
         response = p.add_timer(args['<id>'], args['<time>'], args['<cmd>'])
-        print response
+        print (response)
 
     elif args['delete']:
         response = p.delete(args['<id>'])
-        print "OK, device %s deleted" % (args['<id>'])
+        print ("OK, device %s deleted" % (args['<id>']))
 
     elif args['setCounter']:
         response = p.set_counter(args['<id>'], args['<value>'])
@@ -391,12 +391,12 @@ if __name__ == '__main__':
 
     elif args['rename']:
         response = p.rename(args['<id>'], args['<name>'])
-        print "OK, device %s renamed to %s" % (args['<id>'], args['<name>'])
+        print ("OK, device %s renamed to %s" % (args['<id>'], args['<name>']))
 
     elif args ['log']:
         device = args['<id>']
         response = p.get_logs(args['<id>'])
         if response == 0 :
-            print "ERROR : no device with this IDX"
+            print ("ERROR : no device with this IDX")
         else :
-            print '\n'.join(p.get_logs(args['<id>']))
+            print ('\n'.join(p.get_logs(args['<id>'])))
